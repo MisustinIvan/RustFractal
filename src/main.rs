@@ -1,6 +1,5 @@
 extern crate sdl2;
 
-use rayon::prelude::*;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::mouse::MouseButton;
@@ -13,8 +12,9 @@ mod color_map;
 mod complex;
 mod mandelbrot;
 
+mod test_color_map;
+
 use mandelbrot::MandelbrotSet;
-use sdl2::sys::KeyCode;
 
 fn main() {
     let sdl_context = sdl2::init().unwrap();
