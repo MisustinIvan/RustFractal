@@ -8,7 +8,8 @@ pub struct MandelbrotSet {
     pub width: u32,
     pub height: u32,
     pub max_iter: u32,
-    pub canvas: Vec<Vec<u8>>,
+    pub canvas: Vec<Vec<u16>>,
+    pub seed: Complex,
     left: f64,
     right: f64,
     top: f64,
@@ -17,9 +18,9 @@ pub struct MandelbrotSet {
 
 impl MandelbrotSet {
     pub fn new(w: u32, h: u32, max_iter: u32) -> Self {
-        let mut canvas: Vec<Vec<u8>> = Vec::new();
+        let mut canvas: Vec<Vec<u16>> = Vec::new();
         for _ in 0..h {
-            let mut row: Vec<u8> = Vec::new();
+            let mut row: Vec<u16> = Vec::new();
             for _ in 0..w {
                 row.push(0);
             }
@@ -27,6 +28,7 @@ impl MandelbrotSet {
         }
 
         return MandelbrotSet {
+            seed: Complex::new(0.0, 0.0),
             width: w,
             height: h,
             left: -2.0,
@@ -38,7 +40,7 @@ impl MandelbrotSet {
         };
     }
 
-    pub fn val_to_color_basic(&self, val: u8) -> Color {
+    pub fn val_to_color_basic(&self, val: u16) -> Color {
         if val as u32 == self.max_iter {
             return Color::RGB(0, 0, 0);
         } else {
@@ -58,7 +60,7 @@ impl MandelbrotSet {
                     (self.right - self.left) * (w as f64) / (width as f64) + self.left,
                     (self.top - self.bottom) * (h as f64) / (height as f64) + self.bottom,
                 );
-                let p = self.calculate_point(c, max_iter) as u8;
+                let p = self.calculate_point(c, max_iter) as u16;
                 *row.get_mut(w).unwrap() = p;
             }
         });
@@ -66,8 +68,10 @@ impl MandelbrotSet {
     }
 
     pub fn calculate_point(&self, c: Complex, max_iter: u32) -> u32 {
-        let mut z = Complex::new(0.0, 0.0);
+        //let mut z = Complex::new(0.0, 0.0);
+        let mut z = self.seed;
         for i in 0..max_iter {
+            z = z.abs();
             z = z * z + c;
             if z.mag() > 2.0 {
                 return i;

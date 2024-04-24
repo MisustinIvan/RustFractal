@@ -14,6 +14,13 @@ impl Complex {
     pub fn mag(&self) -> f64 {
         return (self.r * self.r + self.i * self.i).sqrt();
     }
+
+    pub fn abs(&self) -> Complex {
+        return Complex {
+            r: self.r.abs(),
+            i: self.i.abs(),
+        };
+    }
 }
 
 impl Add for Complex {

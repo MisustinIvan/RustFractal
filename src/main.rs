@@ -1,5 +1,6 @@
 extern crate sdl2;
 
+use complex::Complex;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::mouse::MouseButton;
@@ -11,8 +12,7 @@ const HEIGHT: u32 = 1200;
 mod color_map;
 mod complex;
 mod mandelbrot;
-
-mod test_color_map;
+mod test;
 
 use mandelbrot::MandelbrotSet;
 
@@ -28,15 +28,15 @@ fn main() {
 
     let mut canvas = window.into_canvas().build().unwrap();
 
-    //let color_map = color_map::ColorMap::new_default();
-    let color_map = color_map::ColorMap::new(
-        vec![
-            Color::RGB(255, 0, 0),
-            Color::RGB(0, 255, 0),
-            Color::RGB(0, 0, 255),
-        ],
-        vec![0.0, 0.2, 1.0],
-    );
+    let color_map = color_map::ColorMap::new_default();
+    //    let color_map = color_map::ColorMap::new(
+    //        vec![
+    //            Color::RGB(255, 0, 0),
+    //            Color::RGB(0, 255, 0),
+    //            Color::RGB(0, 0, 255),
+    //        ],
+    //        vec![0.0, 0.2, 1.0],
+    //    );
 
     canvas.set_draw_color(Color::RGB(255, 255, 255));
     canvas.clear();
@@ -45,6 +45,7 @@ fn main() {
     let mut event_pump = sdl_context.event_pump().unwrap();
 
     let mut mandelbrot = MandelbrotSet::new(WIDTH, HEIGHT, 100);
+    //mandelbrot.seed = Complex::new(-0.5, 0.0);
     mandelbrot.calculate();
 
     'running: loop {
@@ -80,17 +81,34 @@ fn main() {
                         mandelbrot.move_x(0.1);
                         mandelbrot.calculate();
                     }
+                    Some(Keycode::R) => {
+                        if mandelbrot.max_iter > 100 {
+                            mandelbrot.max_iter -= 100;
+                            mandelbrot.calculate();
+                        }
+                    }
+                    Some(Keycode::T) => {
+                        mandelbrot.max_iter += 100;
+                        mandelbrot.calculate();
+                    }
                     _ => {}
                 },
                 Event::MouseButtonDown {
-                    mouse_btn: MouseButton::Left,
-                    x,
-                    y,
-                    ..
-                } => {
-                    mandelbrot.move_to(x as f64, y as f64);
-                    mandelbrot.calculate();
-                }
+                    mouse_btn, x, y, ..
+                } => match mouse_btn {
+                    MouseButton::Left => {
+                        mandelbrot.move_to(x as f64, y as f64);
+                        mandelbrot.calculate();
+                    }
+
+                    MouseButton::Right => {
+                        println!(
+                            "Value at cursor: {}",
+                            mandelbrot.canvas[y as usize][x as usize]
+                        )
+                    }
+                    _ => {}
+                },
                 _ => {}
             }
         }
