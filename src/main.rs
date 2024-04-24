@@ -28,7 +28,15 @@ fn main() {
 
     let mut canvas = window.into_canvas().build().unwrap();
 
-    let color_map = color_map::ColorMap::new_default();
+    //let color_map = color_map::ColorMap::new_default();
+    let color_map = color_map::ColorMap::new(
+        vec![
+            Color::RGB(255, 0, 0),
+            Color::RGB(0, 255, 0),
+            Color::RGB(0, 0, 255),
+        ],
+        vec![0.0, 0.2, 1.0],
+    );
 
     canvas.set_draw_color(Color::RGB(255, 255, 255));
     canvas.clear();
@@ -91,13 +99,13 @@ fn main() {
 
         for y in 0..mandelbrot.height {
             for x in 0..mandelbrot.width {
-                canvas.set_draw_color(
-                    mandelbrot.val_to_color(mandelbrot.canvas[y as usize][x as usize]),
-                );
-                //canvas.set_draw_color(color_map.get_color(
-                //    mandelbrot.canvas[y as usize][x as usize] as f64,
-                //    mandelbrot.max_iter as f64,
-                //));
+                //canvas.set_draw_color(
+                //    mandelbrot.val_to_color(mandelbrot.canvas[y as usize][x as usize]),
+                //);
+                canvas.set_draw_color(color_map.get_color(
+                    mandelbrot.canvas[y as usize][x as usize] as f64,
+                    mandelbrot.max_iter as f64,
+                ));
                 canvas.draw_point((x as i32, y as i32)).unwrap();
             }
         }

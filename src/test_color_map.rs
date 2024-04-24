@@ -1,5 +1,3 @@
-use sdl2::pixels::Color;
-
 #[cfg(test)]
 use crate::color_map::ColorMap;
 

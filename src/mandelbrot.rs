@@ -38,7 +38,7 @@ impl MandelbrotSet {
         };
     }
 
-    pub fn val_to_color(&self, val: u8) -> Color {
+    pub fn val_to_color_basic(&self, val: u8) -> Color {
         if val as u32 == self.max_iter {
             return Color::RGB(0, 0, 0);
         } else {
