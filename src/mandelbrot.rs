@@ -10,6 +10,9 @@ pub struct MandelbrotSet {
     pub max_iter: u32,
     pub canvas: Vec<Vec<u16>>,
     pub seed: Complex,
+    zoom: f64,
+    centerx: f64,
+    centery: f64,
     left: f64,
     right: f64,
     top: f64,
@@ -35,6 +38,9 @@ impl MandelbrotSet {
             right: 1.0,
             top: 1.0,
             bottom: -1.0,
+            zoom: 1.0,
+            centerx: -0.5,
+            centery: 0.0,
             max_iter,
             canvas,
         };
@@ -89,6 +95,8 @@ impl MandelbrotSet {
         self.right -= diff_width;
         self.top -= diff_height;
         self.bottom += diff_height;
+
+        self.zoom *= zoom;
     }
     pub fn zoom_out(&mut self, zoom: f64) {
         let diff_width = (((self.right - self.left) * zoom) - (self.right - self.left)) / 2.0;
@@ -98,18 +106,22 @@ impl MandelbrotSet {
         self.right += diff_width;
         self.top += diff_height;
         self.bottom -= diff_height;
+
+        self.zoom /= zoom;
     }
 
     pub fn move_x(&mut self, x: f64) {
         let diff = (self.right - self.left) * x;
         self.left += diff;
         self.right += diff;
+        self.centerx += diff;
     }
 
     pub fn move_y(&mut self, y: f64) {
         let diff = (self.top - self.bottom) * y;
         self.top += diff;
         self.bottom += diff;
+        self.centery += diff;
     }
 
     pub fn move_to(&mut self, x: f64, y: f64) {
@@ -121,5 +133,15 @@ impl MandelbrotSet {
         self.right = x + diff_x;
         self.top = y + diff_y;
         self.bottom = y - diff_y;
+        self.centerx = x;
+        self.centery = y;
+    }
+
+    pub fn zoom(&self) -> f64 {
+        return self.zoom;
+    }
+
+    pub fn center(&self) -> (f64, f64) {
+        return (self.centerx, self.centery);
     }
 }
